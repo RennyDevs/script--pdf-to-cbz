@@ -62,3 +62,76 @@ Crear un entorno virtual en Python con `venv` es una práctica excelente para ma
   ```
 
 ---
+
+
+--------------------------------------------------------------------------------
+
+Aquí tienes dos opciones: Makefile (Linux/macOS/WSL/Git Bash) y .bat para Windows. Ambos crean un virtualenv, lo activan (cuando sea posible) e instalan dependencias desde requirements.txt.
+
+Makefile (usa python3; abre una nueva shell para activar):
+```
+PY=python3
+VENV=.venv
+
+.PHONY: create activate install shell clean
+
+create:
+	$(PY) -m venv $(VENV)
+
+install: create
+	$(VENV)/bin/pip install --upgrade pip
+	$(VENV)/bin/pip install -r requirements.txt
+
+# Abre una nueva shell con el venv activado
+shell: install
+	@echo "Abriendo shell con el entorno virtual activado..."
+	. $(VENV)/bin/activate && exec ${SHELL}
+
+clean:
+	rm -rf $(VENV)
+```
+
+Uso:
+- make install — crea el venv e instala dependencias.
+- make shell — abre una nueva shell con el venv activado.
+
+Windows .bat (cmd.exe):
+Save as setup_env.bat in project root (usa python en PATH).
+```
+@echo off
+set VENV=.venv
+
+REM Crear venv si no existe
+if not exist "%VENV%" (
+    python -m venv "%VENV%"
+)
+
+REM Instalar paquetes
+"%VENV%\Scripts\pip.exe" install --upgrade pip
+"%VENV%\Scripts\pip.exe" install -r requirements.txt
+
+echo.
+echo Entorno creado e paquetes instalados en %VENV%.
+echo Para activarlo en CMD:
+echo    %VENV%\Scripts\activate.bat
+echo Para PowerShell:
+echo    %VENV%\Scripts\Activate.ps1
+pause
+```
+
+Opcional: .ps1 para PowerShell (permite activar en la misma sesión):
+Save as setup_env.ps1
+```powershell
+$venv = ".\.venv"
+
+if (-not (Test-Path $venv)) {
+    python -m venv $venv
+}
+
+& "$venv\Scripts\pip.exe" install --upgrade pip
+& "$venv\Scripts\pip.exe" install -r requirements.txt
+
+Write-Host "Entorno listo. Activando..."
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+& "$venv\Scripts\Activate.ps1"
+```
