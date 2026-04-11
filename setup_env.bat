@@ -10,6 +10,8 @@ REM Instalar paquetes
 "%VENV%\Scripts\pip.exe" install --upgrade pip
 "%VENV%\Scripts\pip.exe" install -r requirements.txt
 
+if not exist "todo" mkdir "todo"
+
 echo.
 echo Entorno creado e paquetes instalados en %VENV%.
 echo Para activarlo en CMD:
