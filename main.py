@@ -39,28 +39,6 @@ def pdf_to_image(pdf_path):
 
     print(f"✅ Se guardaron {len(doc)} imágenes en la carpeta: {output_folder}")
 
-def convert_png_to_jpg(carpeta):
-
-    # Recorremos todos los archivos de la carpeta
-    for archivo in os.listdir(carpeta):
-        if archivo.lower().endswith(".png"):
-            ruta_png = os.path.join(carpeta, archivo)
-
-            # Abrimos la imagen
-            imagen = Image.open(ruta_png)
-
-            # Creamos el nombre nuevo con extensión .jpg
-            nombre_jpg = os.path.splitext(archivo)[0] + ".jpg"
-            ruta_jpg = os.path.join(carpeta, nombre_jpg)
-
-            # Convertimos y guardamos en formato JPG
-            imagen.convert("RGB").save(ruta_jpg, "JPEG")
-
-            # Borramos la imagen original PNG
-            os.remove(ruta_png)
-
-    print("Conversión completada: todas las imágenes PNG ahora son JPG.")
-
 if __name__ == "__main__":
     files = get_files(directory="todo")
     for f in files:
