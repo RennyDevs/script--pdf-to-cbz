@@ -70,8 +70,8 @@ def pdf_to_images(pdf_path: Path, output_base_folder: Path) -> Optional[Path]:
                 image_path = target_folder / f"{i + 1:03d}.jpg"  # Padding para orden correcto
                 img.save(image_path, format="JPEG", quality=IMG_QUALITY)
 
-        logger.info(f"🖼️  Convertido: {pdf_path.name} ({len(doc)} páginas)")
-        return target_folder
+            logger.info(f"🖼️  Convertido: {pdf_path.name} ({len(doc)} páginas)")
+            return target_folder
 
     except Exception as e:
         logger.error(f"❌ Error procesando {pdf_path.name}: {e}")
