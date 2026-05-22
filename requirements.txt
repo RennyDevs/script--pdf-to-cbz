@@ -1,4 +1,3 @@
 PyMuPDF==1.26.7
 Pillow==12.2.0
-pymupdf
-tqdm
+tqdm==4.67.3
