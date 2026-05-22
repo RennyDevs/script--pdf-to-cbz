@@ -1,137 +1,122 @@
-Crear un entorno virtual en Python con `venv` es una práctica excelente para mantener tus dependencias aisladas y organizadas. Aquí te dejo los pasos detallados 👇:
+# PDF to CBZ
 
----
+Convierte archivos PDF a formato **CBZ** (ZIP con imágenes comprimidas), ideal para usar en lectores de cómics como **YACReader**, **Komga**, **Kavita**, **Ubooquity** y similares.
 
-## 🛠 Pasos para crear un entorno con `venv`
+## Características
 
-1. **Verifica que tienes Python instalado**
-   En tu terminal o consola:
-   ```bash
-   python --version
-   ```
-   o en algunos sistemas:
-   ```bash
-   python3 --version
-   ```
+- ✅ Conversión por lotes de todos los PDFs en un directorio
+- ✅ Procesamiento paralelo (multithreading) configurable
+- ✅ Compresión automática a formato CBZ
+- ✅ Eliminación opcional del PDF original tras la conversión
+- ✅ Sobrescritura forzada de archivos existentes
+- ✅ Soporte para PDFs protegidos (se omiten automáticamente)
+- ✅ Barra de progreso con `tqdm`
+- ✅ Registro detallado de actividades (logging)
 
-2. **Crea el entorno virtual**
-   En la carpeta de tu proyecto, ejecuta:
-   ```bash
-   python -m venv env
-   ```
-   - Aquí `env` es el nombre del entorno. Puedes llamarlo como quieras (ej. `.venv`, `virtual`, etc.).
+## Requisitos
 
-3. **Activa el entorno virtual**
-   Dependiendo de tu sistema operativo:
+- **Python 3.8+**
+- Dependencias listadas en `requirements.txt`
 
-   - **Windows (CMD o PowerShell):**
-     ```bash
-     .\env\Scripts\activate
-     ```
-   - **Linux / macOS (bash/zsh):**
-     ```bash
-     source env/bin/activate
-     ```
+## Instalación
 
-   Si todo salió bien, verás el nombre del entorno (`env`) al inicio de tu línea de comandos.
+### Windows
 
-4. **Instala tus dependencias dentro del entorno**
-   Por ejemplo:
-   ```bash
-   pip install pymupdf
-   pip install requests
-   ```
-   Cada paquete quedará aislado en tu entorno.
+Ejecuta directamente `run.bat`. El script crea automáticamente un entorno virtual (`.venv/`), instala las dependencias necesarias y ejecuta el programa.
 
-5. **Desactiva el entorno cuando termines**
-   Simplemente ejecuta:
-   ```bash
-   deactivate
-   ```
-
----
-
-## 📦 Buenas prácticas
-- Guarda tus dependencias en un archivo `requirements.txt`:
-  ```bash
-  pip freeze > requirements.txt
-  ```
-- Para restaurarlas en otro entorno:
-  ```bash
-  pip install -r requirements.txt
-  ```
-
----
-
-
---------------------------------------------------------------------------------
-
-Aquí tienes dos opciones: Makefile (Linux/macOS/WSL/Git Bash) y .bat para Windows. Ambos crean un virtualenv, lo activan (cuando sea posible) e instalan dependencias desde requirements.txt.
-
-Makefile (usa python3; abre una nueva shell para activar):
-```
-PY=python3
-VENV=.venv
-
-.PHONY: create activate install shell clean
-
-create:
-	$(PY) -m venv $(VENV)
-
-install: create
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r requirements.txt
-
-# Abre una nueva shell con el venv activado
-shell: install
-	@echo "Abriendo shell con el entorno virtual activado..."
-	. $(VENV)/bin/activate && exec ${SHELL}
-
-clean:
-	rm -rf $(VENV)
+```batch
+run.bat
 ```
 
-Uso:
-- make install — crea el venv e instala dependencias.
-- make shell — abre una nueva shell con el venv activado.
+### Manual (cualquier SO)
 
-Windows .bat (cmd.exe):
-Save as setup_env.bat in project root (usa python en PATH).
-```
-@echo off
-set VENV=.venv
+```bash
+python -m venv .venv
+source .venv/bin/activate     # Linux/macOS
+# .venv\Scripts\activate      # Windows
 
-REM Crear venv si no existe
-if not exist "%VENV%" (
-    python -m venv "%VENV%"
-)
-
-REM Instalar paquetes
-"%VENV%\Scripts\pip.exe" install --upgrade pip
-"%VENV%\Scripts\pip.exe" install -r requirements.txt
-
-echo.
-echo Entorno creado e paquetes instalados en %VENV%.
-echo Para activarlo en CMD:
-echo    %VENV%\Scripts\activate.bat
-echo Para PowerShell:
-echo    %VENV%\Scripts\Activate.ps1
-pause
+pip install -r requirements.txt
+python main.py
 ```
 
-Opcional: .ps1 para PowerShell (permite activar en la misma sesión):
-Save as setup_env.ps1
-```powershell
-$venv = ".\.venv"
+## Uso
 
-if (-not (Test-Path $venv)) {
-    python -m venv $venv
-}
+Coloca los archivos PDF en la carpeta `todo/` y ejecuta:
 
-& "$venv\Scripts\pip.exe" install --upgrade pip
-& "$venv\Scripts\pip.exe" install -r requirements.txt
-
-Write-Host "Entorno listo. Activando..."
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-& "$venv\Scripts\Activate.ps1"
+```bash
+python main.py
 ```
+
+Los archivos CBZ convertidos aparecerán en la carpeta `done/`.
+
+### Estructura de directorios
+
+```
+pdf-to-cbz/
+├── main.py              # Script principal
+├── run.bat              # Lanzador para Windows
+├── requirements.txt     # Dependencias
+├── todo/                # Coloca aquí los PDFs a convertir
+├── done/                # Los CBZ convertidos se guardan aquí
+└── .venv/               # Entorno virtual (creado automáticamente)
+```
+
+### Ejemplos
+
+**Uso básico** — convierte todos los PDFs en `todo/`:
+
+```bash
+python main.py
+```
+
+**Especificar directorios personalizados**:
+
+```bash
+python main.py -i mis_pdfs -o mis_cbzs
+```
+
+**Ajustar calidad y resolución**:
+
+```bash
+python main.py --dpi 300 --quality 95
+```
+
+**Procesar con 8 workers en paralelo**:
+
+```bash
+python main.py --workers 8
+```
+
+**No eliminar los PDF originales**:
+
+```bash
+python main.py --keep-pdf
+```
+
+**Sobrescribir CBZs existentes sin preguntar**:
+
+```bash
+python main.py --force
+```
+
+**Combinar varias opciones**:
+
+```bash
+python main.py -i comics -o cbzs --dpi 300 --quality 92 --workers 6 --force --keep-pdf
+```
+
+## Opciones de línea de comandos
+
+| Argumento        | Por defecto | Descripción                                  |
+|------------------|-------------|----------------------------------------------|
+| `-i`, `--input`  | `todo`      | Directorio de entrada con los PDFs           |
+| `-o`, `--output` | `done`      | Directorio de salida para los CBZs           |
+| `--dpi`          | `200`       | Resolución en DPI para la conversión         |
+| `--quality`      | `90`        | Calidad de compresión JPEG (1–100)           |
+| `--workers`      | `4`         | Número de workers en paralelo                |
+| `--force`        | —           | Sobrescribe CBZs existentes sin preguntar    |
+| `--keep-pdf`     | —           | Conserva el PDF original después de convertir|
+
+## Licencia
+
+MIT
